@@ -115,9 +115,7 @@ const Question = (props: Props) => {
       // 使用AbortController来提供一个取消定时器的机制
       const controller = new AbortController();
 
-      // 设置一个定时器，120秒后打印“结束”并清除定时器
       const timerId = setTimeout(() => {
-        // 清除interval
         clearInterval(intervalId);
         navigate("/result", { replace: true });
       }, initDuration * 1000);
@@ -141,7 +139,32 @@ const Question = (props: Props) => {
         controller.abort(); // 取消任何正在进行的操作
       };
     }
-  }, [navigate, initDuration]); // 依赖数组中包含duration
+  }, [navigate, initDuration]);
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    const getOption = async () => {
+      const queryParams = new URLSearchParams(location.search);
+      const userNameFromQuery = queryParams.get("userName") || "test";
+      const res = await getFetch(
+        {
+          headers: {},
+          url: "/get/option",
+          signal: signal,
+        },
+        { questionID: questionTag, userName: userNameFromQuery },
+        {
+          onError: () => {},
+        }
+      );
+      if (res > 0) {
+        setOption(res);
+      }
+    };
+    if (questionTag > 0 && initDuration > 0) {
+      getOption();
+    }
+  }, [initDuration, location.search, questionTag]);
   return (
     <main className="party-main">
       <div className="party-bg">
