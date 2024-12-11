@@ -3,20 +3,35 @@ import "../styles/question.scss";
 import questionJsonFile from "../json/question.json";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getFetch, jsonFetch } from "../utils/fetchRequest";
-
+import CircularProgressBar from "../components/CircularProgressBar";
+import { motion } from "framer-motion";
+import MyDialog from "../components/MyDialog";
 type Props = {};
 const questionJson = questionJsonFile as any;
 const Question = (props: Props) => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [optionList, setOptionList] = useState(["鸭和鹅", "天鹅", "鸡"]);
+  const [optionList, setOptionList] = useState([
+    {
+      name: "鸭和鹅",
+      idx: "A",
+    },
+    {
+      name: "天鹅",
+      idx: "B",
+    },
+    {
+      name: "鸡",
+      idx: "C",
+    },
+  ]);
   const [questionTitle, setQuestionTitle] = useState("");
   const [questionTag, setQuestionTag] = useState(0);
   const [initDuration, setInitDuration] = useState(0); // 初始化状态
   const [duration, setDuration] = useState(0); // 初始化状态
-  const [option, setOption] = useState(0); // 初始化状态
-
+  const [selectedOption, setSelectedOption] = useState(0); // 初始化状态
+  const [isModalOpen, setModalOpen] = useState(false);
   const toBegin = async (params: any) => {
     const res = await jsonFetch(
       {
@@ -34,8 +49,8 @@ const Question = (props: Props) => {
     console.log("🚀XZG ~ toBegin ~ res:", res);
   };
   const postOption = async (params: any) => {
-    if (!option || option <= 0) {
-      console.log("请选一项");
+    if (!selectedOption || selectedOption <= 0) {
+      setModalOpen(true);
       return;
     }
     const queryParams = new URLSearchParams(location.search);
@@ -46,18 +61,19 @@ const Question = (props: Props) => {
         url: `/choose?userName=${userNameFromQuery}`,
         signal: params.signal,
       },
-      { questionID: questionTag, option: option },
+      { questionID: questionTag, option: selectedOption },
       {
         onError: () => {},
       }
     );
     console.log("🚀XZG ~ postOption ~ res:", res);
+    navigate("/result", { state: { resultParam: "答题完成！" } });
     // if (res.code === 0) {
 
     // }
   };
-  const selectOption = async (params: any) => {
-    setOption(params);
+  const toSelectOption = async (params: any) => {
+    setSelectedOption(params);
   };
   useEffect(() => {
     for (const keying in questionJson) {
@@ -117,7 +133,7 @@ const Question = (props: Props) => {
 
       const timerId = setTimeout(() => {
         clearInterval(intervalId);
-        navigate("/result", { replace: true });
+        navigate("/result", { state: { resultParam: "您已放弃作答！" } });
       }, initDuration * 1000);
 
       // 设置一个每秒执行的interval，减少duration
@@ -158,7 +174,7 @@ const Question = (props: Props) => {
         }
       );
       if (res > 0) {
-        setOption(res);
+        setSelectedOption(res);
       }
     };
     if (questionTag > 0 && initDuration > 0) {
@@ -167,42 +183,75 @@ const Question = (props: Props) => {
   }, [initDuration, location.search, questionTag]);
   return (
     <main className="party-main">
-      <div className="party-bg">
-        <div className="top-bg"></div>
-        <div className="question-body">
-          <div className="countdown-container" onClick={toBegin}>
-            <div className="countdown-title">倒计时</div>
-            <div className="countdown-circle">{duration}</div>
-          </div>
-          <section className="question-section">
-            <p className="question-tag">问题{questionTag}</p>
-            <p className="question-title">{questionTitle}</p>
-          </section>
-          <section className="option-section">
-            {optionList.map((item, index) => (
-              <button
-                className={
-                  option === index + 1
-                    ? "option-button selected"
-                    : "option-button"
-                }
-                key={JSON.stringify(item)}
-                onClick={() => {
-                  selectOption(index + 1);
-                }}
-              >
-                {item}
-              </button>
-            ))}
-          </section>
-        </div>
-      </div>
+      {initDuration > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="party-bg"
+        >
+          <div className="top-bg"></div>
+          <div className="question-body">
+            <div className="countdown-container">
+              <CircularProgressBar
+                totalDuration={initDuration}
+                radius={50}
+              ></CircularProgressBar>
+            </div>
 
-      <div className="submit-button-container">
-        <button className="submit-button" onClick={postOption}>
-          提交
-        </button>
-      </div>
+            <section className="question-section">
+              <p className="question-tag">问题{questionTag}</p>
+              <p className="question-title">{questionTitle}</p>
+            </section>
+            <section className="option-section">
+              {optionList.map((item, index) => (
+                <div
+                  className={
+                    selectedOption === index + 1
+                      ? "option-button selected"
+                      : "option-button"
+                  }
+                  key={JSON.stringify(item)}
+                  onClick={() => {
+                    toSelectOption(index + 1);
+                  }}
+                >
+                  <div className="option-idx">{item.idx}</div>
+                  <span className="option-name">{item.name}</span>
+                </div>
+              ))}
+            </section>
+          </div>
+          <div className="submit-button-container">
+            <button
+              className={
+                selectedOption > 0 ? "submit-button selected" : "submit-button"
+              }
+              onClick={postOption}
+            >
+              提交
+            </button>
+          </div>
+        </motion.div>
+      )}
+      {initDuration <= 0 && (
+        <div className="wait-bg">
+          <div className="party-center" onClick={toBegin}>
+            <div>等待作答</div>
+          </div>
+          <p className="wait-text">请等待扫描下一题</p>
+        </div>
+      )}
+      {isModalOpen && (
+        <MyDialog
+          isOpen={isModalOpen}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          message="请先选择一个选项！"
+        />
+      )}
     </main>
   );
 };

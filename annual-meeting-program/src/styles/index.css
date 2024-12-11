@@ -12,19 +12,37 @@
     src        : url(./fonts/TencentSansW7.a14cc1d8.ttf) format("truetype")
 }
 
-html {
+/* html {
     font-size: 16px;
+} */
+
+html {
+    font-size: calc(10px + 1.5vw);
+    /* 假设这里设置为视口宽度的0.75%，这个值可以根据需要调整 */
 }
 
+@media (max-width: 320px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+/* 防止字体大小变得太大 */
+@media (min-width: 750px) {
+    html {
+        font-size: 18px;
+    }
+}
 
 body {
     margin                 : 0;
     padding                : 0;
-    font-family            : TencentSansW7, Segoe UI, MFDianHei-Extra-light, Microsoft YaHei UI Light, "sans-serif" !important;
+    font-family            : TencentSansW7, TencentSansW3, Segoe UI, MFDianHei-Extra-light, Microsoft YaHei UI Light, "sans-serif" !important;
     background-color       : #fff;
     -webkit-font-smoothing : antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering         : optimizeLegibility;
+    color                  : #21234a;
 }
 
 button {
@@ -32,7 +50,7 @@ button {
     border     : none;
     background : 0 0;
     cursor     : pointer;
-    font-family            : TencentSansW7, Segoe UI, MFDianHei-Extra-light, Microsoft YaHei UI Light, "sans-serif" !important;
+    font-family: TencentSansW7, TencentSansW3, Segoe UI, MFDianHei-Extra-light, Microsoft YaHei UI Light, "sans-serif" !important;
 
     &:focus {
         outline: none;

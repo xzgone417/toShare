@@ -1,0 +1,29 @@
+.circular-progress-container {
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+
+}
+
+.circular-progress-svg {
+    // transform: rotate(-90deg); // 使圆环从顶部开始
+    background-color: rgb(255, 255, 255);
+    border-radius   : 50%;
+}
+
+.timer {
+    position  : absolute;
+    left      : 50%;
+    top       : 50%;
+    transform : translate(-50%, -50%);
+    text-align: center;
+
+    .timer-text {
+        font-size     : 1rem;
+        padding-bottom: 0.2rem;
+    }
+
+    .timer-num {
+        font-size: 1.5rem;
+    }
+}

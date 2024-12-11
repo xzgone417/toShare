@@ -1,20 +1,20 @@
 import React from "react";
 import "../styles/result.scss";
+import { useLocation } from "react-router-dom";
 type Props = {};
 
 const Result = (props: Props) => {
+  const location = useLocation();
+  const { resultParam } = location.state || {};
   return (
     <>
       <main className="party-main">
-        <div className="party-bg">
-          <div className="top-bg"></div>
-          <div className="question-body">
-            <div className="countdown-container"></div>
-            答题结束
+        <div className="wait-bg">
+          <div className="party-center">
+            <div>{resultParam}</div>
           </div>
+          <p className="wait-text">请等待扫描下一题</p>
         </div>
-
-        <div className="submit-button-container"></div>
       </main>
     </>
   );

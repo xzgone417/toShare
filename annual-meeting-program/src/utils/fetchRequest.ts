@@ -57,9 +57,10 @@ export function getTimestampManager() {
     };
 }
 
-export const confDomain = ""
-// export const confDomain = "http://timish.woa.com"
+// export const confDomain = ""
+export const confDomain = "http://timish.woa.com"
 // domain: "http://annualparty-server.annualpart-server.odprrp.woa.com",
+// "proxy": "http://localhost:8081",
 export const jsonFetch = async (
     _config: Partial<RequestConfigType>,
     query: any,
