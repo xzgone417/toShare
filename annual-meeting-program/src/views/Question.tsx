@@ -12,30 +12,18 @@ const Question = (props: Props) => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [optionList, setOptionList] = useState([
-    {
-      name: "鸭和鹅",
-      idx: "A",
-    },
-    {
-      name: "天鹅",
-      idx: "B",
-    },
-    {
-      name: "鸡",
-      idx: "C",
-    },
-  ]);
+  const [optionList, setOptionList] = useState([] as any[]);
   const [questionTitle, setQuestionTitle] = useState("");
   const [questionTag, setQuestionTag] = useState(0);
   const [initDuration, setInitDuration] = useState(0); // 初始化状态
   const [duration, setDuration] = useState(0); // 初始化状态
   const [selectedOption, setSelectedOption] = useState(0); // 初始化状态
   const [isModalOpen, setModalOpen] = useState(false);
+  const [headerJsonMap, setHeaderJsonMap] = useState("");
   const toBegin = async (params: any) => {
     const res = await jsonFetch(
       {
-        headers: {},
+        headers: { headerJsonMap: headerJsonMap },
         url: "/begin",
         signal: params.signal,
       },
@@ -46,7 +34,6 @@ const Question = (props: Props) => {
         },
       }
     );
-    console.log("🚀XZG ~ toBegin ~ res:", res);
   };
   const postOption = async (params: any) => {
     if (!selectedOption || selectedOption <= 0) {
@@ -54,10 +41,10 @@ const Question = (props: Props) => {
       return;
     }
     const queryParams = new URLSearchParams(location.search);
-    const userNameFromQuery = queryParams.get("userName") || "test"; // 获取名为 'myParam' 的查询参数
+    const userNameFromQuery = queryParams.get("userName") || ""; // 获取名为 'myParam' 的查询参数
     const res = await jsonFetch(
       {
-        headers: {},
+        headers: { headerJsonMap: headerJsonMap },
         url: `/choose?userName=${userNameFromQuery}`,
         signal: params.signal,
       },
@@ -75,6 +62,7 @@ const Question = (props: Props) => {
   const toSelectOption = async (params: any) => {
     setSelectedOption(params);
   };
+
   useEffect(() => {
     for (const keying in questionJson) {
       if (Object.prototype.hasOwnProperty.call(questionJson, keying)) {
@@ -87,7 +75,15 @@ const Question = (props: Props) => {
       }
     }
   }, [questionId]);
-
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    let codeFromQuery = queryParams.get("code") || ""; // 获取名为 'myParam' 的查询参数
+    if (!codeFromQuery || codeFromQuery === "") {
+      codeFromQuery = localStorage.getItem(codeFromQuery) + "";
+    }
+    setHeaderJsonMap(codeFromQuery);
+    localStorage.setItem("codeFromQuery", codeFromQuery);
+  }, [location.search]);
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
@@ -95,7 +91,7 @@ const Question = (props: Props) => {
     const getTime = async () => {
       const res = await getFetch(
         {
-          headers: {},
+          headers: { headerJsonMap: headerJsonMap },
           url: "/get/time",
           signal: signal,
         },
@@ -124,7 +120,7 @@ const Question = (props: Props) => {
         clearInterval(timerId);
       }
     };
-  }, [questionTag]);
+  }, [headerJsonMap, questionTag]);
 
   useEffect(() => {
     if (initDuration > 0) {
@@ -161,10 +157,10 @@ const Question = (props: Props) => {
     const { signal } = controller;
     const getOption = async () => {
       const queryParams = new URLSearchParams(location.search);
-      const userNameFromQuery = queryParams.get("userName") || "test";
+      const userNameFromQuery = queryParams.get("userName") || "";
       const res = await getFetch(
         {
-          headers: {},
+          headers: { headerJsonMap: headerJsonMap },
           url: "/get/option",
           signal: signal,
         },
@@ -180,7 +176,7 @@ const Question = (props: Props) => {
     if (questionTag > 0 && initDuration > 0) {
       getOption();
     }
-  }, [initDuration, location.search, questionTag]);
+  }, [headerJsonMap, initDuration, location.search, questionTag]);
   return (
     <main className="party-main">
       {initDuration > 0 && (
@@ -217,8 +213,8 @@ const Question = (props: Props) => {
                     toSelectOption(index + 1);
                   }}
                 >
-                  <div className="option-idx">{item.idx}</div>
-                  <span className="option-name">{item.name}</span>
+                  <div className="option-idx">{item?.idx}</div>
+                  <span className="option-name">{item?.name}</span>
                 </div>
               ))}
             </section>

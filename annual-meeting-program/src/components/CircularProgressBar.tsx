@@ -69,7 +69,6 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
       <div className="timer">
         <div className="timer-text">倒计时</div>
         <div className="timer-number">
-          {" "}
           {Math.ceil(totalDuration - progress)}
         </div>
       </div>
