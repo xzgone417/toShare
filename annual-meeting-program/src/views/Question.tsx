@@ -41,7 +41,7 @@ const Question = (props: Props) => {
       return;
     }
     const queryParams = new URLSearchParams(location.search);
-    const userNameFromQuery = queryParams.get("userName") || ""; // 获取名为 'myParam' 的查询参数
+    const userNameFromQuery = queryParams.get("userName") || "1"; // 获取名为 'myParam' 的查询参数
     const res = await jsonFetch(
       {
         headers: { headerJsonMap: headerJsonMap },
@@ -82,7 +82,9 @@ const Question = (props: Props) => {
       codeFromQuery = localStorage.getItem(codeFromQuery) + "";
     }
     setHeaderJsonMap(codeFromQuery);
-    localStorage.setItem("codeFromQuery", codeFromQuery);
+    if (codeFromQuery) {
+      localStorage.setItem("codeFromQuery", codeFromQuery);
+    }
   }, [location.search]);
   useEffect(() => {
     const controller = new AbortController();
@@ -233,8 +235,8 @@ const Question = (props: Props) => {
       )}
       {initDuration <= 0 && (
         <div className="wait-bg">
-          <div className="party-center" onClick={toBegin}>
-            <div>等待作答</div>
+          <div className="party-center">
+            <div onClick={toBegin}>等待作答</div>
           </div>
           <p className="wait-text">请等待扫描下一题</p>
         </div>

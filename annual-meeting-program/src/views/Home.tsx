@@ -1,5 +1,4 @@
 import React from "react";
-import CircularProgressBar from "../components/CircularProgressBar";
 
 type Props = {};
 
