@@ -1,6 +1,5 @@
 import React from "react";
 import "../styles/home.scss";
-import { useNavigate } from "react-router-dom";
 type Props = {};
 
 const Home = (props: Props) => {
