@@ -2,15 +2,16 @@
     font-family: TencentSansW3;
     font-style : normal;
     font-weight: 400;
-    src        : url(./fonts/TencentSansW3.d9647e80.ttf) format("truetype")
+    src        : url(./fonts/TencentSansW3.ttf) format("truetype")
 }
 
 @font-face {
     font-family: TencentSansW7;
     font-style : normal;
     font-weight: 400;
-    src        : url(./fonts/TencentSansW7.a14cc1d8.ttf) format("truetype")
+    src        : url(./fonts/TencentSansW7.ttf) format("truetype")
 }
+
 
 /* html {
     font-size: 16px;

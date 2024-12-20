@@ -20,21 +20,21 @@ const Question = (props: Props) => {
   const [selectedOption, setSelectedOption] = useState(0); // 初始化状态
   const [isModalOpen, setModalOpen] = useState(false);
   const [headerJsonMap, setHeaderJsonMap] = useState("");
-  const toBegin = async (params: any) => {
-    const res = await jsonFetch(
-      {
-        headers: { headerJsonMap: headerJsonMap },
-        url: "/begin",
-        signal: params.signal,
-      },
-      questionTag,
-      {
-        onError: () => {
-          console.log("begin-error");
-        },
-      }
-    );
-  };
+  // const toBegin = async (params: any) => {
+  //   const res = await jsonFetch(
+  //     {
+  //       headers: { headerJsonMap: headerJsonMap },
+  //       url: "/begin",
+  //       signal: params.signal,
+  //     },
+  //     questionTag,
+  //     {
+  //       onError: () => {
+  //         console.log("begin-error");
+  //       },
+  //     }
+  //   );
+  // };
   const postOption = async (params: any) => {
     if (!selectedOption || selectedOption <= 0) {
       setModalOpen(true);
@@ -53,7 +53,6 @@ const Question = (props: Props) => {
         onError: () => {},
       }
     );
-    console.log("🚀XZG ~ postOption ~ res:", res);
     navigate("/result", { state: { resultParam: "答题完成！" } });
     // if (res.code === 0) {
 
@@ -236,7 +235,7 @@ const Question = (props: Props) => {
       {initDuration <= 0 && (
         <div className="wait-bg">
           <div className="party-center">
-            <div onClick={toBegin}>等待作答</div>
+            <div>等待作答</div>
           </div>
           <p className="wait-text">请等待扫描下一题</p>
         </div>
