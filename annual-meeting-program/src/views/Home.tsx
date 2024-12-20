@@ -7,6 +7,7 @@ const Home = (props: Props) => {
   // const toBegin = () => {
   //   navigate("/result", { state: { resultParam: "请扫码答下一题！" } });
   // };
+
   return (
     <>
       <main className="party-main">

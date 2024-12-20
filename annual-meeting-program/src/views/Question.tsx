@@ -19,11 +19,10 @@ const Question = (props: Props) => {
   const [duration, setDuration] = useState(0); // 初始化状态
   const [selectedOption, setSelectedOption] = useState(0); // 初始化状态
   const [isModalOpen, setModalOpen] = useState(false);
-  const [headerJsonMap, setHeaderJsonMap] = useState("");
   // const toBegin = async (params: any) => {
   //   const res = await jsonFetch(
   //     {
-  //       headers: { headerJsonMap: headerJsonMap },
+  //       headers: { },
   //       url: "/begin",
   //       signal: params.signal,
   //     },
@@ -44,7 +43,7 @@ const Question = (props: Props) => {
     const userNameFromQuery = queryParams.get("userName") || "1"; // 获取名为 'myParam' 的查询参数
     const res = await jsonFetch(
       {
-        headers: { headerJsonMap: headerJsonMap },
+        headers: {},
         url: `/choose?userName=${userNameFromQuery}`,
         signal: params.signal,
       },
@@ -74,17 +73,7 @@ const Question = (props: Props) => {
       }
     }
   }, [questionId]);
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    let codeFromQuery = queryParams.get("code") || ""; // 获取名为 'myParam' 的查询参数
-    if (!codeFromQuery || codeFromQuery === "") {
-      codeFromQuery = localStorage.getItem(codeFromQuery) + "";
-    }
-    setHeaderJsonMap(codeFromQuery);
-    if (codeFromQuery) {
-      localStorage.setItem("codeFromQuery", codeFromQuery);
-    }
-  }, [location.search]);
+
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
@@ -92,7 +81,7 @@ const Question = (props: Props) => {
     const getTime = async () => {
       const res = await getFetch(
         {
-          headers: { headerJsonMap: headerJsonMap },
+          headers: {},
           url: "/get/time",
           signal: signal,
         },
@@ -121,7 +110,7 @@ const Question = (props: Props) => {
         clearInterval(timerId);
       }
     };
-  }, [headerJsonMap, questionTag]);
+  }, [questionTag]);
 
   useEffect(() => {
     if (initDuration > 0) {
@@ -161,7 +150,7 @@ const Question = (props: Props) => {
       const userNameFromQuery = queryParams.get("userName") || "";
       const res = await getFetch(
         {
-          headers: { headerJsonMap: headerJsonMap },
+          headers: {},
           url: "/get/option",
           signal: signal,
         },
@@ -177,7 +166,7 @@ const Question = (props: Props) => {
     if (questionTag > 0 && initDuration > 0) {
       getOption();
     }
-  }, [headerJsonMap, initDuration, location.search, questionTag]);
+  }, [initDuration, location.search, questionTag]);
   return (
     <main className="party-main">
       {initDuration > 0 && (

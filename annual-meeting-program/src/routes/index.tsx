@@ -1,6 +1,6 @@
 // src/routes/index.tsx
 import React, { lazy, Suspense } from "react";
-import { Routes, Route, HashRouter, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Layout from "./layout";
 import Loading from "../components/Loader";
 const Home = lazy(() => import("../views/Home"));
