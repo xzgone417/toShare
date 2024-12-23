@@ -23,7 +23,7 @@ const Question = (props: Props) => {
   //   const res = await jsonFetch(
   //     {
   //       headers: { },
-  //       url: "/begin",
+  //       url: "/annual/begin",
   //       signal: params.signal,
   //     },
   //     questionTag,
@@ -44,7 +44,7 @@ const Question = (props: Props) => {
     const res = await jsonFetch(
       {
         headers: {},
-        url: `/choose?userName=${userNameFromQuery}`,
+        url: `/annual/choose?userName=${userNameFromQuery}`,
         signal: params.signal,
       },
       { questionID: questionTag, option: selectedOption },
@@ -82,7 +82,7 @@ const Question = (props: Props) => {
       const res = await getFetch(
         {
           headers: {},
-          url: "/get/time",
+          url: "/annual/get/time",
           signal: signal,
         },
         { questionID: questionTag },
@@ -151,7 +151,7 @@ const Question = (props: Props) => {
       const res = await getFetch(
         {
           headers: {},
-          url: "/get/option",
+          url: "/annual/get/option",
           signal: signal,
         },
         { questionID: questionTag, userName: userNameFromQuery },
