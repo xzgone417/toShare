@@ -1,0 +1,9 @@
+{
+    "status": 200,
+    "name": "OK",
+    "description": "请求成功。一般用于 GET 与 POST 请求",
+    "message": "OK",
+    "data": {
+        "token": "eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6IlJPTEVfVVNFUiIsInN1YiI6InZfeHpnZ3h1IiwiZXhwIjoxNzQzNzUxNzcwfQ.4qRz460mAO6kSayJ_UxILN-iahu8rLgMUkKSORhNnTd8gGQrNo2iDQFNQ069mda3oj70Jy-xzsbAaNa9s5ImnQ"
+    }
+}
