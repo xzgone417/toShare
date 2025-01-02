@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
-import "../styles/dialog.scss";
+import "../styles/components/dialog.scss";
 const MyDialog = ({ isOpen, onClose, message }: any) => {
   useEffect(() => {
     // 当对话框打开时，禁用页面滚动

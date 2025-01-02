@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/circle.scss";
+import "../styles/components/circle.scss";
 
 interface CircularProgressBarProps {
   totalDuration: number; // 总时长，单位：秒

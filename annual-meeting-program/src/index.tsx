@@ -3,6 +3,9 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 import reportWebVitals from "./reportWebVitals";
 import Routes from "./routes";
+// import VConsole from "vconsole";
+// 初始化 vConsole
+// const vConsole = new VConsole();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

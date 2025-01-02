@@ -6,14 +6,21 @@ type Props = {};
 const Result = (props: Props) => {
   const location = useLocation();
   const { resultParam } = location.state || {};
+
   return (
     <>
       <main className="party-main">
-        <div className="wait-bg">
-          <div className="party-center">
-            <div>{resultParam}</div>
-          </div>
-          <p className="wait-text">请等待扫描下一题</p>
+        <div
+          className="wait-bg"
+          style={
+            resultParam > 0
+              ? {
+                  backgroundImage: "url(https://timish.woa.com/assets/ok-bg.jpg)",
+                }
+              : { backgroundImage: "url(https://timish.woa.com/assets/abandon-bg.jpg)" }
+          }
+        >
+          <div className="next-question"></div>
         </div>
       </main>
     </>

@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "../styles/question.scss";
 import questionJsonFile from "../json/question.json";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getFetch, jsonFetch } from "../utils/fetchRequest";
-import CircularProgressBar from "../components/CircularProgressBar";
 import { motion } from "framer-motion";
 import MyDialog from "../components/MyDialog";
+import HorizontalProgressBar from "../components/HorizontalProgressBar";
+import Loader from "../components/Loader";
 type Props = {};
 const questionJson = questionJsonFile as any;
+const optionImages = [
+  {
+    selected: "https://timish.woa.com/assets/select-A.png",
+    default: "https://timish.woa.com/assets/btn-A.png",
+  },
+  {
+    selected: "https://timish.woa.com/assets/select-B.png",
+    default: "https://timish.woa.com/assets/btn-B.png",
+  },
+  {
+    selected: "https://timish.woa.com/assets/select-C.png",
+    default: "https://timish.woa.com/assets/btn-C.png",
+  },
+];
 const Question = (props: Props) => {
   const { questionId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const [optionList, setOptionList] = useState([] as any[]);
   const [questionTitle, setQuestionTitle] = useState("");
   const [questionTag, setQuestionTag] = useState(0);
@@ -19,32 +34,34 @@ const Question = (props: Props) => {
   const [duration, setDuration] = useState(0); // 初始化状态
   const [selectedOption, setSelectedOption] = useState(0); // 初始化状态
   const [isModalOpen, setModalOpen] = useState(false);
-  // const toBegin = async (params: any) => {
-  //   const res = await jsonFetch(
-  //     {
-  //       headers: { },
-  //       url: "/annual/begin",
-  //       signal: params.signal,
-  //     },
-  //     questionTag,
-  //     {
-  //       onError: () => {
-  //         console.log("begin-error");
-  //       },
-  //     }
-  //   );
-  // };
+  const [isLoading, setIsLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const toBegin = async (params: any) => {
+    await jsonFetch(
+      {
+        headers: {},
+        url: "/annual/begin",
+        signal: params.signal,
+      },
+      questionTag,
+      {
+        onError: () => {
+          console.log("begin-error");
+        },
+      }
+    );
+  };
   const postOption = async (params: any) => {
+    setIsLoading(true);
     if (!selectedOption || selectedOption <= 0) {
       setModalOpen(true);
       return;
     }
-    const queryParams = new URLSearchParams(location.search);
-    const userNameFromQuery = queryParams.get("userName") || "1"; // 获取名为 'myParam' 的查询参数
-    const res = await jsonFetch(
+    await jsonFetch(
       {
         headers: {},
-        url: `/annual/choose?userName=${userNameFromQuery}`,
+        url: `/annual/choose`,
         signal: params.signal,
       },
       { questionID: questionTag, option: selectedOption },
@@ -52,20 +69,40 @@ const Question = (props: Props) => {
         onError: () => {},
       }
     );
-    navigate("/result", { state: { resultParam: "答题完成！" } });
-    // if (res.code === 0) {
-
-    // }
+    setIsLoading(false);
+    navigate("/result", { state: { resultParam: 1 } });
   };
   const toSelectOption = async (params: any) => {
     setSelectedOption(params);
   };
 
+  const optionBtnStyle = (index: number) => {
+    const idx = index - 1;
+    return {
+      backgroundImage: `url(${
+        selectedOption === index
+          ? optionImages[idx].selected
+          : optionImages[idx].default
+      })`,
+      transition: "background-image 0.3s ease-in-out", // 添加过渡效果
+      opacity: imageLoaded ? 1 : 0, // 根据图片加载状态设置透明度
+    };
+  };
+  // 预加载所有图片
+  useEffect(() => {
+    optionImages.forEach((image) => {
+      const img1 = new Image();
+      img1.src = image.selected;
+      const img2 = new Image();
+      img2.src = image.default;
+    });
+    setImageLoaded(true); // 所有图片加载完成
+  }, []);
   useEffect(() => {
     for (const keying in questionJson) {
       if (Object.prototype.hasOwnProperty.call(questionJson, keying)) {
         const element = questionJson[keying] as any;
-        if (questionId?.includes(element.id)) {
+        if (questionId && Number(questionId) === Number(element.id)) {
           setOptionList(element.options);
           setQuestionTitle(element.title);
           setQuestionTag(element.id);
@@ -79,7 +116,7 @@ const Question = (props: Props) => {
     const { signal } = controller;
     let timerId: any = null;
     const getTime = async () => {
-      const res = await getFetch(
+      let res = await getFetch(
         {
           headers: {},
           url: "/annual/get/time",
@@ -90,14 +127,34 @@ const Question = (props: Props) => {
           onError: () => {},
         }
       );
+
       if (res > 0) {
         setDuration(res);
         setInitDuration(res);
         clearInterval(timerId);
         timerId = null;
+        await getOption();
+      } else {
+        setIsLoading(false);
       }
     };
-
+    const getOption = async () => {
+      const res = await getFetch(
+        {
+          headers: {},
+          url: "/annual/get/option",
+          signal: signal,
+        },
+        { questionID: questionTag },
+        {
+          onError: () => {},
+        }
+      );
+      if (res > 0) {
+        navigate("/result", { state: { resultParam: 1 } });
+      }
+      setIsLoading(false);
+    };
     if (questionTag > 0) {
       timerId = setInterval(() => {
         getTime();
@@ -110,7 +167,7 @@ const Question = (props: Props) => {
         clearInterval(timerId);
       }
     };
-  }, [questionTag]);
+  }, [navigate, questionTag]);
 
   useEffect(() => {
     if (initDuration > 0) {
@@ -119,7 +176,7 @@ const Question = (props: Props) => {
 
       const timerId = setTimeout(() => {
         clearInterval(intervalId);
-        navigate("/result", { state: { resultParam: "您已放弃作答！" } });
+        navigate("/result", { state: { resultParam: 0 } });
       }, initDuration * 1000);
 
       // 设置一个每秒执行的interval，减少duration
@@ -142,31 +199,7 @@ const Question = (props: Props) => {
       };
     }
   }, [navigate, initDuration]);
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    const getOption = async () => {
-      const queryParams = new URLSearchParams(location.search);
-      const userNameFromQuery = queryParams.get("userName") || "";
-      const res = await getFetch(
-        {
-          headers: {},
-          url: "/annual/get/option",
-          signal: signal,
-        },
-        { questionID: questionTag, userName: userNameFromQuery },
-        {
-          onError: () => {},
-        }
-      );
-      if (res > 0) {
-        setSelectedOption(res);
-      }
-    };
-    if (questionTag > 0 && initDuration > 0) {
-      getOption();
-    }
-  }, [initDuration, location.search, questionTag]);
+
   return (
     <main className="party-main">
       {initDuration > 0 && (
@@ -177,33 +210,26 @@ const Question = (props: Props) => {
           transition={{ duration: 0.4 }}
           className="party-bg"
         >
-          <div className="top-bg"></div>
+          <div className="countdown-container">
+            <HorizontalProgressBar
+              totalDuration={initDuration}
+            ></HorizontalProgressBar>
+          </div>
           <div className="question-body">
-            <div className="countdown-container">
-              <CircularProgressBar
-                totalDuration={initDuration}
-                radius={50}
-              ></CircularProgressBar>
-            </div>
-
             <section className="question-section">
-              <p className="question-tag">问题{questionTag}</p>
-              <p className="question-title">{questionTitle}</p>
+              <div className="question-tag">问题{questionTag}</div>
+              <div className="question-title">{questionTitle}</div>
             </section>
             <section className="option-section">
               {optionList.map((item, index) => (
                 <div
-                  className={
-                    selectedOption === index + 1
-                      ? "option-button selected"
-                      : "option-button"
-                  }
+                  className="option-button"
+                  style={optionBtnStyle(index + 1)}
                   key={JSON.stringify(item)}
                   onClick={() => {
                     toSelectOption(index + 1);
                   }}
                 >
-                  <div className="option-idx">{item?.idx}</div>
                   <span className="option-name">{item?.name}</span>
                 </div>
               ))}
@@ -215,20 +241,19 @@ const Question = (props: Props) => {
                 selectedOption > 0 ? "submit-button selected" : "submit-button"
               }
               onClick={postOption}
-            >
-              提交
-            </button>
+            ></button>
           </div>
         </motion.div>
       )}
       {initDuration <= 0 && (
-        <div className="wait-bg">
-          <div className="party-center">
-            <div>等待作答</div>
+        <div className="wait-bg" onClick={toBegin}>
+          {/* <div className="party-center" >
+            <div >等待作答</div>
           </div>
-          <p className="wait-text">请等待扫描下一题</p>
+          <p className="wait-text">请等待扫描下一题</p> */}
         </div>
       )}
+
       {isModalOpen && (
         <MyDialog
           isOpen={isModalOpen}
@@ -238,6 +263,7 @@ const Question = (props: Props) => {
           message="请先选择一个选项！"
         />
       )}
+      {isLoading && <Loader></Loader>}
     </main>
   );
 };

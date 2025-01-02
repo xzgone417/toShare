@@ -12,9 +12,10 @@ const Home = (props: Props) => {
     <>
       <main className="party-main">
         <div className="wait-bg">
-          <div className="party-center">
-            <div>请扫码进行答题</div>
+          {/* <div className="party-center">
+            <div>{resultParam}</div>
           </div>
+          <p className="wait-text">请等待扫描下一题</p> */}
         </div>
       </main>
     </>
