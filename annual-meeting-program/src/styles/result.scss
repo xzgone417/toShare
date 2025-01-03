@@ -5,59 +5,125 @@
     flex-direction : column;
     width          : 100vw;
     height         : 100vh;
+    overflow       : hidden;
+
+    .result-header {
+        width            : 100%;
+        height           : 67vw;
+        background-image : url('../../public/assets/result-header.jpg');
+        background-repeat: no-repeat;
+        background-size  : cover;
+
+        @media screen and (min-width:750px) {
+            height: 45vw;
+        }
+
+        @media screen and (max-height:675px) {
+            height: 65vw;
+        }
+
+    }
 
     .wait-bg {
-        width               : 100%;
-        aspect-ratio        : 1080/2340;
-        max-height          : 100vh;
-        background-image    : url('https://timish.woa.com/assets/ok-bg.jpg');
-        background-repeat   : no-repeat;
-        // background-size  : cover;
-        background-size     : 100%;
-        position            : relative;
+        width : 100%;
+        height: calc(100vh - 67vw);
+
+        background-image : url('../../public/assets/result-bg1.jpg');
+        background-repeat: no-repeat;
+        background-size  : cover;
+        position         : relative;
+
+        @media screen and (min-width:750px) {
+            height: calc(100vh - 45vw);
+        }
+
+        @media screen and (max-height:675px) {
+            height: calc(100vh - 65vw);
+        }
+
+
+
+        .blue-bg {
+            width            : 100%;
+            aspect-ratio     : 458/550;
+            background-image : url('../../public/assets/result-dian.png');
+            background-repeat: no-repeat;
+            background-size  : cover;
+            position         : absolute;
+            z-index          : 1;
+            top              : 5vh;
+            left             : 0;
+        }
+
+        .dialog-bg {
+            position         : absolute;
+            left             : 0;
+            top              : -5vw;
+            background-image : url('../../public/assets/ok-dialog.png');
+            background-repeat: no-repeat;
+            width            : 100%;
+            background-size  : 100% 100%;
+            height           : 40vh;
+            z-index          : 30;
+            transform        : translateY(-5vw);
+
+            @media screen and (min-width:750px) {
+                top   : -1vw;
+                height: 36vh;
+            }
+        }
 
         .next-question {
             position         : absolute;
             left             : 0;
-            top              : 74.7%;
-            background-image : url('https://timish.woa.com/assets/next-question.png');
+            top              : 42vh;
+            background-image : url('../../public/assets/next-question.png');
             background-repeat: no-repeat;
             background-size  : cover;
             width            : 100%;
             aspect-ratio     : 1080/235;
+            z-index          : 30;
+
+            @media screen and (min-width:750px) {
+                top       : 33vh;
+                // max-height: 165px;
+            }
+
+            @media screen and (max-height:675px) {
+                top: 38vh;
+            }
+
+            &.near {
+                top: 36vh;
+            }
         }
 
-        // display          : flex;
-        // justify-content  : center;
-        // align-items      : center;
-        // flex-direction   : column;
-        // width            : 100%;
-        // height           : 100vh;
-        // text-align       : center;
-        // background-image : url('../assets/bg_guanjianci_01.png');
-        // background-repeat: no-repeat;
-        // background-size  : cover;
+        .result-footer {
+            position                     : fixed;
+            left                         : 0;
+            bottom                       : 0;
+            background-image             : url('../../public/assets/result-footer.png');
+            background-repeat            : no-repeat;
+            background-size              : cover;
+            width                        : 100%;
+            // height                    : 26vw;
+            aspect-ratio                 : 1080/290;
+            z-index                      : 30;
 
-        // .party-center {
-        //     width           : 90%;
-        //     box-sizing      : border-box;
-        //     position        : relative;
-        //     border-radius   : 16px;
-        //     background-color: #fff;
-        //     min-height      : 30vh;
-        //     color           : #202249;
-        //     display         : flex;
-        //     justify-content : center;
-        //     align-items     : center;
-        //     font-size       : 2rem;
-        // }
+            &.near {
+                height: 20vw;
+            }
 
-        // .wait-text {
-        //     text-align : center;
-        //     padding-top: 3vh;
-        //     font-size  : 1.5rem;
-        //     color      : #ffffff;
-        // }
+            .logo {
+                position    : absolute;
+                top         : 60%;
+                left        : 50%;
+                transform   : translate(-50%, );
+                width       : 15%;
+                aspect-ratio: 184/80;
+                z-index     : 35;
+            }
+        }
     }
 
 

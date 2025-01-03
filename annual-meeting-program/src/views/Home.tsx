@@ -11,11 +11,23 @@ const Home = (props: Props) => {
   return (
     <>
       <main className="party-main">
+        <div className="result-header"></div>
         <div className="wait-bg">
-          {/* <div className="party-center">
-            <div>{resultParam}</div>
+          <div className="blue-bg"></div>
+          <div
+            className="dialog-bg"
+            // style={
+            //   resultParam > 0
+            //     ? {
+            //         backgroundImage: "url(../../public/assets/ok-bg.jpg)",
+            //       }
+            //     : { backgroundImage: "url(../../public/assets/abandon-bg.jpg)" }
+            // }
+          ></div>
+          <div className="next-question"></div>
+          <div className="result-footer">
+            <img className="logo" src="/assets/logo-white.png" alt=""></img>
           </div>
-          <p className="wait-text">请等待扫描下一题</p> */}
         </div>
       </main>
     </>

@@ -7,24 +7,27 @@ import { motion } from "framer-motion";
 import MyDialog from "../components/MyDialog";
 import HorizontalProgressBar from "../components/HorizontalProgressBar";
 import Loader from "../components/Loader";
+import useWindowSize from "../hooks/useWindowSize";
+
 type Props = {};
 const questionJson = questionJsonFile as any;
 const optionImages = [
   {
-    selected: "https://timish.woa.com/assets/select-A.png",
-    default: "https://timish.woa.com/assets/btn-A.png",
+    selected: "/assets/select-A.png",
+    default: "/assets/btn-A.png",
   },
   {
-    selected: "https://timish.woa.com/assets/select-B.png",
-    default: "https://timish.woa.com/assets/btn-B.png",
+    selected: "/assets/select-B.png",
+    default: "/assets/btn-B.png",
   },
   {
-    selected: "https://timish.woa.com/assets/select-C.png",
-    default: "https://timish.woa.com/assets/btn-C.png",
+    selected: "/assets/select-C.png",
+    default: "/assets/btn-C.png",
   },
 ];
 const Question = (props: Props) => {
   const { questionId } = useParams();
+  const windowSize = useWindowSize();
   const navigate = useNavigate();
   // const location = useLocation();
   const [optionList, setOptionList] = useState([] as any[]);
@@ -129,6 +132,7 @@ const Question = (props: Props) => {
       );
 
       if (res > 0) {
+        res = res * 100;
         setDuration(res);
         setInitDuration(res);
         clearInterval(timerId);
@@ -210,48 +214,67 @@ const Question = (props: Props) => {
           transition={{ duration: 0.4 }}
           className="party-bg"
         >
-          <div className="countdown-container">
-            <HorizontalProgressBar
-              totalDuration={initDuration}
-            ></HorizontalProgressBar>
+          <div className="header-bg">
+            <div className="countdown-text">倒计时</div>
+            <div className="countdown-container">
+              <HorizontalProgressBar
+                totalDuration={initDuration}
+              ></HorizontalProgressBar>
+            </div>
           </div>
-          <div className="question-body">
-            <section className="question-section">
-              <div className="question-tag">问题{questionTag}</div>
-              <div className="question-title">{questionTitle}</div>
-            </section>
-            <section className="option-section">
-              {optionList.map((item, index) => (
-                <div
-                  className="option-button"
-                  style={optionBtnStyle(index + 1)}
-                  key={JSON.stringify(item)}
-                  onClick={() => {
-                    toSelectOption(index + 1);
-                  }}
-                >
-                  <span className="option-name">{item?.name}</span>
-                </div>
-              ))}
-            </section>
-          </div>
-          <div className="submit-button-container">
-            <button
-              className={
-                selectedOption > 0 ? "submit-button selected" : "submit-button"
-              }
-              onClick={postOption}
-            ></button>
+
+          <div
+            className="question-body"
+            id={windowSize?.depthWidthRatio < 1.8 ? "near" : ""}
+          >
+            <div className="form-section">
+              <section className="question-section">
+                <div className="question-tag">问题{questionTag}</div>
+                <div className="question-title">{questionTitle}</div>
+              </section>
+              <section className="option-section">
+                {optionList.map((item, index) => (
+                  <div
+                    className="option-button"
+                    style={optionBtnStyle(index + 1)}
+                    key={JSON.stringify(item)}
+                    onClick={() => {
+                      toSelectOption(index + 1);
+                    }}
+                  >
+                    <span className="option-name">{item?.name}</span>
+                  </div>
+                ))}
+              </section>
+            </div>
+
+            <div className="submit-button-container">
+              <button
+                className={
+                  selectedOption > 0
+                    ? "submit-button selected"
+                    : "submit-button"
+                }
+                onClick={postOption}
+              ></button>
+            </div>
+            <img className="logo" src="/assets/logo-black.png" alt=""></img>
           </div>
         </motion.div>
       )}
       {initDuration <= 0 && (
-        <div className="wait-bg" onClick={toBegin}>
-          {/* <div className="party-center" >
-            <div >等待作答</div>
+        <>
+          <div className="result-header"></div>
+          <div className="wait-bg">
+            <div className="blue-bg"></div>
+            <div className="dialog-bg" onClick={toBegin}></div>
+            {/* <div className="dialog-bg" onClick={toBegin}></div> */}
+            {/* <div className="next-question"></div> */}
+            <div className="result-footer">
+              <img className="logo" src="/assets/logo-white.png" alt=""></img>
+            </div>
           </div>
-          <p className="wait-text">请等待扫描下一题</p> */}
-        </div>
+        </>
       )}
 
       {isModalOpen && (
